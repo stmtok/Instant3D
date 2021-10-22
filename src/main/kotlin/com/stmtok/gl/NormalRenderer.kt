@@ -46,7 +46,7 @@ class NormalRenderer(
 
     override fun init(drawable: GLAutoDrawable) {
         val gl = drawable.gl.gL2
-        fbo.setup(gl, width, height)
+        fbo.setup(gl, drawable.surfaceWidth, drawable.surfaceHeight)
         shader.setup(gl)
     }
 

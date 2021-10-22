@@ -43,8 +43,8 @@ class StereoRenderer(
 
     override fun init(drawable: GLAutoDrawable) {
         val gl = drawable.gl.gL2
-        leftFBO.setup(gl, width / 2, height)
-        rightFBO.setup(gl, width / 2, height)
+        leftFBO.setup(gl, drawable.surfaceWidth / 2, drawable.surfaceHeight)
+        rightFBO.setup(gl, drawable.surfaceWidth / 2, drawable.surfaceHeight)
         distortionShader.setup(gl)
     }
 

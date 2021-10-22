@@ -4,6 +4,7 @@ import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
 import com.stmtok.view.Point
 import com.stmtok.view.Rotation
+import java.nio.FloatBuffer
 import kotlin.math.sqrt
 
 
@@ -27,6 +28,9 @@ abstract class SceneDrawer(
 
     /** モデル空間の角度を返します */
     abstract fun getModelRotation(): Rotation
+
+    /** モデル空間の拡大率を返します */
+    abstract fun getModelScale(): Double
 
     open fun lightSetting(gl: GL2) {
         // 画面外の上方から照明を当てるように設定
@@ -71,12 +75,14 @@ abstract class SceneDrawer(
         // VR空間を描画
         drawVRSpace(gl)
 
-        val modelPos = getModelPosition()
-        gl2.glTranslated(modelPos.x, modelPos.y, modelPos.z)
+        val modelScale = getModelScale()
+        gl2.glScaled(modelScale, modelScale, modelScale)
         val modelRot = getModelRotation()
         gl2.glRotated(modelRot.x, 1.0, 0.0, 0.0)
         gl2.glRotated(modelRot.y, 0.0, 1.0, 0.0)
         gl2.glRotated(modelRot.z, 0.0, 0.0, 1.0)
+        val modelPos = getModelPosition()
+        gl2.glTranslated(modelPos.x, modelPos.y, modelPos.z)
 
         // モデル空間を描画
         drawModelSpace(gl)

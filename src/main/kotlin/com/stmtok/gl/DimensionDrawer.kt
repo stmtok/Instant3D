@@ -1,6 +1,7 @@
 package com.stmtok.gl
 
 import com.jogamp.opengl.GL
+import com.jogamp.opengl.GL2
 import com.stmtok.view.Point
 import com.stmtok.view.Rotation
 
@@ -49,12 +50,14 @@ abstract class DimensionDrawer(
         // VR空間を描画
         drawVRSpace(gl)
 
-        val modelPos = getModelPosition()
-        gl2.glTranslated(modelPos.x, modelPos.y, modelPos.z)
+        val modelScale = getModelScale()
+        gl2.glScaled(modelScale, modelScale, modelScale)
         val modelRot = getModelRotation()
         gl2.glRotated(modelRot.x, 1.0, 0.0, 0.0)
         gl2.glRotated(modelRot.y, 0.0, 1.0, 0.0)
         gl2.glRotated(modelRot.z, 0.0, 0.0, 1.0)
+        val modelPos = getModelPosition()
+        gl2.glTranslated(modelPos.x, modelPos.y, modelPos.z)
 
         // モデル空間を描画
         drawModelSpace(gl)

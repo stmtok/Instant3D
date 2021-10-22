@@ -21,10 +21,10 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
     private val shader: NormalShader = NormalShader()
 
     /** 並行投影のスケール */
-    var scale: Double = 6.0
+    var scale: Double = 10.0
     private var drawer: DimensionDrawer? = null
-    private val fontSize = 16
-    private val textRenderer = TextRenderer(Font(Font.SANS_SERIF, Font.PLAIN, fontSize))
+    private var fontSize = 16
+    private var textRenderer = TextRenderer(Font(Font.SANS_SERIF, Font.PLAIN, fontSize))
     private val glu = GLU()
 
     init {
@@ -43,6 +43,8 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
 
     override fun init(drawable: GLAutoDrawable) {
         val gl = drawable.gl.gL2
+        fontSize = 16 * drawable.surfaceHeight / height
+        textRenderer = TextRenderer(Font(Font.SANS_SERIF, Font.PLAIN, fontSize))
         topFBO.setup(gl, width / 2, height / 2)
         frontFBO.setup(gl, width / 2, height / 2)
         perspectiveFBO.setup(gl, width / 2, height / 2)
@@ -50,7 +52,8 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         shader.setup(gl)
     }
 
-    override fun reshape(drawable: GLAutoDrawable, p1: Int, p2: Int, p3: Int, p4: Int) {
+    override fun reshape(drawable: GLAutoDrawable, x: Int, y: Int, width: Int, height: Int) {
+
         topFBO.updateSize(drawable.gl.gL2, width / 2, height / 2)
         frontFBO.updateSize(drawable.gl.gL2, width / 2, height / 2)
         perspectiveFBO.updateSize(drawable.gl.gL2, width / 2, height / 2)
@@ -109,7 +112,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         }
         textRenderer.setColor(Color.WHITE)
         textRenderer.beginRendering(topFBO.width, topFBO.height)
-        textRenderer.draw("Top(X-Z)", 10, topFBO.height - fontSize)
+        textRenderer.draw("Top (X-Z)", 10, topFBO.height - fontSize)
         textRenderer.endRendering()
 
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, frontFBO.frameBufferName)
@@ -127,7 +130,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         }
         textRenderer.setColor(Color.WHITE)
         textRenderer.beginRendering(frontFBO.width, frontFBO.height)
-        textRenderer.draw("Front(X-Y)", 10, frontFBO.height - fontSize)
+        textRenderer.draw("Front (X-Y)", 10, frontFBO.height - fontSize)
         textRenderer.endRendering()
 
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, sideFBO.frameBufferName)
@@ -145,7 +148,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         }
         textRenderer.setColor(Color.WHITE)
         textRenderer.beginRendering(sideFBO.width, sideFBO.height)
-        textRenderer.draw("Side(Z-Y)", 10, sideFBO.height - fontSize)
+        textRenderer.draw("Side (Z-Y)", 10, sideFBO.height - fontSize)
         textRenderer.endRendering()
 
         gl.glDisable(GL.GL_DEPTH_TEST)
