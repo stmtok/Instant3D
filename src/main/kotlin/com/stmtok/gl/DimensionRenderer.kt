@@ -53,7 +53,6 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
     }
 
     override fun reshape(drawable: GLAutoDrawable, x: Int, y: Int, width: Int, height: Int) {
-
         topFBO.updateSize(drawable.gl.gL2, width / 2, height / 2)
         frontFBO.updateSize(drawable.gl.gL2, width / 2, height / 2)
         perspectiveFBO.updateSize(drawable.gl.gL2, width / 2, height / 2)
@@ -72,7 +71,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
     override fun display(drawable: GLAutoDrawable) {
         val gl = drawable.gl.gL2
         val sceneDrawer = getSceneDrawer()
-        sceneDrawer?.preDisplay(gl)
+        sceneDrawer?.displaySync()
 
         gl.glEnable(GL2.GL_LIGHTING)
         gl.glEnable(GL2.GL_LIGHT0)
@@ -89,6 +88,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         gl.glViewport(0, 0, perspectiveFBO.width, perspectiveFBO.height)
 
         sceneDrawer?.dimension = DimensionDrawer.Dimension.FREE
+        sceneDrawer?.drawPerspectiveScene(gl)
         sceneDrawer?.drawScene(gl) ?: kotlin.run {
             gl.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
         }
@@ -107,6 +107,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         gl.glViewport(0, 0, topFBO.width, topFBO.height)
 
         sceneDrawer?.dimension = DimensionDrawer.Dimension.TOP
+        sceneDrawer?.drawZXScene(gl)
         sceneDrawer?.drawScene(gl) ?: kotlin.run {
             gl.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
         }
@@ -125,6 +126,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         gl.glViewport(0, 0, frontFBO.width, frontFBO.height)
 
         sceneDrawer?.dimension = DimensionDrawer.Dimension.FRONT
+        sceneDrawer?.drawXYScene(gl)
         sceneDrawer?.drawScene(gl) ?: kotlin.run {
             gl.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
         }
@@ -143,6 +145,7 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         gl.glViewport(0, 0, sideFBO.width, sideFBO.height)
 
         sceneDrawer?.dimension = DimensionDrawer.Dimension.SIDE
+        sceneDrawer?.drawYZScene(gl)
         sceneDrawer?.drawScene(gl) ?: kotlin.run {
             gl.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
         }
@@ -155,8 +158,6 @@ class DimensionRenderer(width: Int, height: Int) : GLRenderer(32.0, 0.1, 100.0) 
         gl.glDisable(GL2.GL_LIGHT1)
         gl.glDisable(GL2.GL_LIGHT0)
         gl.glDisable(GL2.GL_LIGHTING)
-
-        sceneDrawer?.preRender(gl)
 
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
         gl.glMatrixMode(GL2.GL_PROJECTION)

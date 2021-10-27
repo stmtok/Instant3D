@@ -1,5 +1,6 @@
-package com.stmtok.view
+package com.stmtok.geom
 
+import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -39,6 +40,28 @@ data class Vector(
     }
 
     fun toPoint(base: Point = Point()): Point = base + this
+    val matrix: Matrix by lazy {
+        Matrix(
+            listOf(
+                listOf(0.0, 0.0, 0.0, x),
+                listOf(0.0, 0.0, 0.0, y),
+                listOf(0.0, 0.0, 0.0, z),
+                listOf(0.0, 0.0, 0.0, 1.0),
+            )
+        )
+    }
+
+    fun rotation(rot: Rotation): Vector {
+        val result = rot.matrix.transpose * matrix
+        return Vector(result[0, 3], result[1, 3], result[2, 3])
+    }
+
+    fun transform(mat: Matrix): Vector {
+        val result = mat * matrix
+        return Vector(result[0, 3], result[1, 3], result[2, 3])
+    }
+
+    fun angle(v: Vector): Double = Companion.angle(this, v)
 
     companion object {
         fun dot(v0: Vector, v1: Vector): Double {
@@ -51,6 +74,14 @@ data class Vector(
                 v0.z * v1.x - v0.x * v1.z,
                 v0.x * v1.y - v0.y * v1.x,
             )
+        }
+
+        fun angle(v0: Vector, v1: Vector): Double {
+            return if (v0.length > 0 && v1.length > 0) {
+                atan2(v0.cross(v1).length, v0.dot(v1))
+            } else {
+                Double.NaN
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.stmtok.view
+package com.stmtok.geom
 
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -20,7 +20,10 @@ data class Point(
     fun distance(p: Point): Double = Companion.distance(this, p)
 
     fun toVector(base: Point = Point()): Vector = this - base
-
+    fun transform(mat: Matrix): Vector {
+        val result = mat * toVector().matrix
+        return Vector(result[0, 3], result[1, 3], result[2, 3])
+    }
     companion object {
         fun square(p0: Point, p1: Point): Double {
             return (p1.x - p0.x).pow(2) + (p1.y - p0.y).pow(2) + (p1.z - p0.z).pow(2)

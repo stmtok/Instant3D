@@ -53,7 +53,7 @@ class NormalRenderer(
     override fun display(drawable: GLAutoDrawable) {
         val gl = drawable.gl.gL2
         val sceneDrawer = getSceneDrawer()
-        sceneDrawer?.preDisplay(gl)
+        sceneDrawer?.displaySync()
 
         gl.glEnable(GL2.GL_LIGHTING)
         gl.glEnable(GL2.GL_LIGHT0)
@@ -84,8 +84,6 @@ class NormalRenderer(
         gl.glDisable(GL2.GL_LIGHT1)
         gl.glDisable(GL2.GL_LIGHT0)
         gl.glDisable(GL2.GL_LIGHTING)
-
-        sceneDrawer?.preRender(gl)
 
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
         gl.glMatrixMode(GL2.GL_PROJECTION)

@@ -51,7 +51,7 @@ class StereoRenderer(
     override fun display(drawable: GLAutoDrawable) {
         val gl = drawable.gl.gL2
         val sceneDrawer = getSceneDrawer()
-        sceneDrawer?.preDisplay(gl)
+        sceneDrawer?.displaySync()
 
         gl.glEnable(GL2.GL_LIGHTING)
         gl.glEnable(GL2.GL_LIGHT0)
@@ -92,8 +92,6 @@ class StereoRenderer(
         gl.glDisable(GL2.GL_LIGHT1)
         gl.glDisable(GL2.GL_LIGHT0)
         gl.glDisable(GL2.GL_LIGHTING)
-
-        sceneDrawer?.preRender(gl)
 
         // 画面に表示
         gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)

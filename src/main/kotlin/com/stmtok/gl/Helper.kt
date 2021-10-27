@@ -3,7 +3,7 @@ package com.stmtok.gl
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
 import com.jogamp.opengl.util.gl2.GLUT
-import com.stmtok.view.Point
+import com.stmtok.geom.Point
 import java.nio.FloatBuffer
 
 object Helper {

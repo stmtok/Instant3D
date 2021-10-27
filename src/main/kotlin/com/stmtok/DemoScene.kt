@@ -2,10 +2,7 @@ package com.stmtok
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
-import com.jogamp.opengl.math.Matrix4
-import com.jogamp.opengl.math.VectorUtil
 import com.jogamp.opengl.util.FPSAnimator
-import com.jogamp.opengl.util.gl2.GLUT
 import com.stmtok.gl.*
 import com.stmtok.gl.Colors.blue
 import com.stmtok.gl.Colors.cyan
@@ -13,24 +10,20 @@ import com.stmtok.gl.Colors.darkGreen
 import com.stmtok.gl.Colors.gray
 import com.stmtok.gl.Colors.green
 import com.stmtok.gl.Colors.lightGray
-import com.stmtok.gl.Colors.magenta
 import com.stmtok.gl.Colors.orange
 import com.stmtok.gl.Colors.red
-import com.stmtok.gl.Colors.white
 import com.stmtok.gl.Colors.yellow
 import com.stmtok.gl.Helper.drawLine
 import com.stmtok.gl.Helper.drawSphere
 import com.stmtok.gl.Helper.glut
 import com.stmtok.gl.Helper.solidSphere
-import com.stmtok.view.Point
-import com.stmtok.view.Rotation
-import com.stmtok.view.Vector
+import com.stmtok.geom.Point
+import com.stmtok.geom.Rotation
+import com.stmtok.geom.Vector
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import java.nio.FloatBuffer
 import javax.swing.JFrame
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 class DemoScene : DimensionDrawer(), KeyListener {
@@ -51,11 +44,11 @@ class DemoScene : DimensionDrawer(), KeyListener {
 
     private val r = 0.3
     private val o = Point()
-    private val ro = 0.0
-    private val p0 = Point(3, 1, 0)
-    private val r0 = 1.5
-    private val p1 = Point(1, 3, 0)
-    private val r1 = 1.5
+    private val ro = 1.0
+    private val p0 = Point(5, 0, 0)
+    private val r0 = 1.0
+    private val p1 = Point(0, 5, 0)
+    private val r1 = 1.0
 
     private val normals: MutableList<Vector> = mutableListOf()
 
@@ -64,7 +57,7 @@ class DemoScene : DimensionDrawer(), KeyListener {
     private var random1: Point? = null
     private var put: Boolean = false
 
-    override fun preDisplay(gl: GL) {
+    override fun displaySync() {
         if (put && normals.size < 10000) {
             val ov = getRandomPoint(o, ro).also {
                 randomO = it
@@ -105,10 +98,15 @@ class DemoScene : DimensionDrawer(), KeyListener {
         drawSphere(this, p0, r0, orange)
         drawSphere(this, p1, r1, darkGreen)
 
+        val buf = FloatBuffer.allocate(1)
+        glGetFloatv(GL.GL_POINT_SIZE, buf)
+        glPointSize(5f)
+        gl.gL2.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE, cyan, 0)
+        glBegin(GL.GL_POINTS)
         normals.forEach {
-            solidSphere(this, it.toPoint(), 0.05, cyan)
+            glVertex3d(it.x, it.y, it.z)
         }
-
+        glEnd()
     }
 
     private fun drawAxis(gl: GL2) {
@@ -152,101 +150,83 @@ class DemoScene : DimensionDrawer(), KeyListener {
             KeyEvent.VK_LEFT -> {
                 if (e.isShiftDown) {
                     // x方向平行移動
-                    modelPos -= Vector(
-                        modelRot.cy * modelRot.cz,
-                        -modelRot.cy * modelRot.sz,
-                        modelRot.sy
-                    ) / modelScale
+                    modelPos -= Vector(1, 0, 0).rotation(modelRot) / modelScale
                 } else {
-                    modelRot = modelRot.copy(y = modelRot.y + angleStep)
+                    modelRot = modelRot.multi(Rotation(0.0, -angleStep, 0.0))
                 }
             }
             KeyEvent.VK_RIGHT -> {
                 if (e.isShiftDown) {
                     // -x方向平行移動
-                    modelPos += Vector(
-                        modelRot.cy * modelRot.cz,
-                        -modelRot.cy * modelRot.sz,
-                        modelRot.sy
-                    ) / modelScale
+                    modelPos += Vector(1, 0, 0).rotation(modelRot) / modelScale
                 } else {
-                    modelRot = modelRot.copy(y = modelRot.y - angleStep)
+                    modelRot = modelRot.multi(Rotation(0.0, angleStep, 0.0))
                 }
             }
             KeyEvent.VK_UP -> {
                 if (e.isShiftDown) {
                     // y方向平行移動
-                    modelPos += Vector(
-                        modelRot.sx * modelRot.sy * modelRot.cz + modelRot.cx * modelRot.sz,
-                        -modelRot.sx * modelRot.sy * modelRot.sz + modelRot.cx * modelRot.cz,
-                        -modelRot.sx * modelRot.cy
-                    ) / modelScale
+                    modelPos += Vector(0, 1, 0).rotation(modelRot) / modelScale
                 } else {
-                    modelRot = modelRot.copy(x = modelRot.x + angleStep)
+                    modelRot = modelRot.multi(Rotation(-angleStep, 0.0, 0.0))
                 }
             }
             KeyEvent.VK_DOWN -> {
                 if (e.isShiftDown) {
                     // -y方向平行移動
-                    modelPos -= Vector(
-                        modelRot.sx * modelRot.sy * modelRot.cz + modelRot.cx * modelRot.sz,
-                        -modelRot.sx * modelRot.sy * modelRot.sz + modelRot.cx * modelRot.cz,
-                        -modelRot.sx * modelRot.cy
-                    ) / modelScale
+                    modelPos -= Vector(0, 1, 0).rotation(modelRot) / modelScale
                 } else {
-                    modelRot = modelRot.copy(x = modelRot.x - angleStep)
+                    modelRot = modelRot.multi(Rotation(angleStep, 0.0, 0.0))
                 }
             }
             KeyEvent.VK_D -> {
                 cameraRot = cameraRot.copy(y = cameraRot.y - angleStep)
                 val d = cameraPos.distance(Point())
-                val tmp = d * cos(cameraRot.rx)
-                val x = tmp * sin(cameraRot.ry)
-                val y = d * -sin(cameraRot.rx)
-                val z = tmp * cos(cameraRot.ry)
-                cameraPos = Point(x, y, z)
+                cameraPos = Point(
+                    x = d * cameraRot.cx * cameraRot.sy,
+                    y = d * -cameraRot.sx,
+                    z = d * cameraRot.cx * cameraRot.cy
+                )
             }
             KeyEvent.VK_A -> {
                 cameraRot = cameraRot.copy(y = cameraRot.y + angleStep)
                 val d = cameraPos.distance(Point())
-                val tmp = d * cos(cameraRot.rx)
-                val x = tmp * sin(cameraRot.ry)
-                val y = d * -sin(cameraRot.rx)
-                val z = tmp * cos(cameraRot.ry)
-                cameraPos = Point(x, y, z)
+                cameraPos = Point(
+                    x = d * cameraRot.cx * cameraRot.sy,
+                    y = d * -cameraRot.sx,
+                    z = d * cameraRot.cx * cameraRot.cy
+                )
             }
             KeyEvent.VK_S -> {
                 cameraRot = cameraRot.copy(x = cameraRot.x - angleStep)
                 val d = cameraPos.distance(Point())
-                val tmp = d * cos(cameraRot.rx)
-                val x = tmp * sin(cameraRot.ry)
-                val y = d * -sin(cameraRot.rx)
-                val z = tmp * cos(cameraRot.ry)
-                cameraPos = Point(x, y, z)
+                cameraPos = Point(
+                    x = d * cameraRot.cx * cameraRot.sy,
+                    y = d * -cameraRot.sx,
+                    z = d * cameraRot.cx * cameraRot.cy
+                )
             }
             KeyEvent.VK_W -> {
                 cameraRot = cameraRot.copy(x = cameraRot.x + angleStep)
                 val d = cameraPos.distance(Point())
-                val tmp = d * cos(cameraRot.rx)
-                val x = tmp * sin(cameraRot.ry)
-                val y = d * -sin(cameraRot.rx)
-                val z = tmp * cos(cameraRot.ry)
-                cameraPos = Point(x, y, z)
+                cameraPos = Point(
+                    x = d * cameraRot.cx * cameraRot.sy,
+                    y = d * -cameraRot.sx,
+                    z = d * cameraRot.cx * cameraRot.cy
+                )
             }
             KeyEvent.VK_Q -> {
                 if (e.isShiftDown) {
-                    modelScale /= 2.0
+                    modelScale *= 2.0
                 } else {
-                    val v = (Point() - cameraPos).normal()
-                    cameraPos += v
+                    cameraPos += (Point() - cameraPos).normal()
                 }
             }
             KeyEvent.VK_Z -> {
                 if (e.isShiftDown) {
-                    modelScale *= 2.0
+                    modelScale /= 2.0
                 } else {
-                    val v = (cameraPos - Point()).normal()
-                    cameraPos += v
+                    cameraPos += (cameraPos - Point()).normal()
                 }
             }
             KeyEvent.VK_C -> {
@@ -292,6 +272,6 @@ fun main() {
         pack()
         isVisible = true
     }
-    val animator = FPSAnimator(renderer, 60)
+    val animator = FPSAnimator(renderer, 30)
     animator.start()
 }

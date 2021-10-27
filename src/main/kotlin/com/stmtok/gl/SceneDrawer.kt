@@ -2,10 +2,8 @@ package com.stmtok.gl
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
-import com.stmtok.view.Point
-import com.stmtok.view.Rotation
-import java.nio.FloatBuffer
-import kotlin.math.sqrt
+import com.stmtok.geom.Point
+import com.stmtok.geom.Rotation
 
 
 abstract class SceneDrawer(
@@ -32,6 +30,7 @@ abstract class SceneDrawer(
     /** モデル空間の拡大率を返します */
     abstract fun getModelScale(): Double
 
+    /** 光源設定 */
     open fun lightSetting(gl: GL2) {
         // 画面外の上方から照明を当てるように設定
         val ambient = floatArrayOf(0.3f, 0.3f, 0.3f, 1f)
@@ -45,16 +44,14 @@ abstract class SceneDrawer(
         gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, diffuse, 0)
     }
 
-    open fun preDisplay(gl: GL) = Unit
+    /** 描画スレッド実行毎に呼ばれる */
+    open fun displaySync() = Unit
 
     open fun drawScene(gl: GL) {
         val gl2 = gl.gL2
         // 透過設定を有効化
-        gl2.glEnable(GL.GL_BLEND)
-        gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-
-        gl2.glClearColor(0f, 0f, 0.0f, 1f);
-        gl2.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
+        gl.glEnable(GL.GL_BLEND)
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
 
         // カメラの姿勢の初期値に依存する角度を設定
         gl2.glRotated(defaultCameraRotation.x, 1.0, 0.0, 0.0)
@@ -88,10 +85,8 @@ abstract class SceneDrawer(
         drawModelSpace(gl)
 
         // 透過設定を無効化
-        gl2.glDisable(GL.GL_BLEND)
+        gl.glDisable(GL.GL_BLEND)
     }
-
-    open fun preRender(gl: GL) = Unit
 
     /** VR空間を描画する */
     abstract fun drawVRSpace(gl: GL)

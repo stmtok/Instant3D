@@ -1,9 +1,8 @@
 package com.stmtok.gl
 
 import com.jogamp.opengl.GL
-import com.jogamp.opengl.GL2
-import com.stmtok.view.Point
-import com.stmtok.view.Rotation
+import com.stmtok.geom.Point
+import com.stmtok.geom.Rotation
 
 abstract class DimensionDrawer(
     var dimension: Dimension = Dimension.FREE,
@@ -21,9 +20,6 @@ abstract class DimensionDrawer(
         // 透過設定を有効化
         gl2.glEnable(GL.GL_BLEND)
         gl2.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-
-        gl2.glClearColor(0f, 0f, 0.0f, 1f);
-        gl2.glClear(GL.GL_COLOR_BUFFER_BIT or GL.GL_DEPTH_BUFFER_BIT)
 
         // カメラを設定
         when (dimension) {
@@ -65,4 +61,9 @@ abstract class DimensionDrawer(
         // 透過設定を無効化
         gl2.glDisable(GL.GL_BLEND)
     }
+
+    open fun drawXYScene(gl: GL) = Unit
+    open fun drawYZScene(gl: GL) = Unit
+    open fun drawZXScene(gl: GL) = Unit
+    open fun drawPerspectiveScene(gl: GL) = Unit
 }
