@@ -1,10 +1,10 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
 import com.jogamp.opengl.GLAutoDrawable
 import com.jogamp.opengl.glu.GLU
-import com.stmtok.gl.shader.DistortionShader
+import com.stmtok.common.gl.shader.DistortionShader
 import java.awt.Dimension
 import kotlin.math.atan2
 

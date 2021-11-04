@@ -1,8 +1,8 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 import com.jogamp.opengl.GL
-import com.stmtok.geom.Point
-import com.stmtok.geom.Rotation
+import com.stmtok.common.geom.Point
+import com.stmtok.common.geom.Rotation
 
 abstract class DimensionDrawer(
     var dimension: Dimension = Dimension.FREE,

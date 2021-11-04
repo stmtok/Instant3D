@@ -1,4 +1,4 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 import com.jogamp.opengl.GLCapabilities
 import com.jogamp.opengl.GLEventListener

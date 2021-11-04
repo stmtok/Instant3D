@@ -1,4 +1,4 @@
-package com.stmtok.geom
+package com.stmtok.common.geom
 
 import kotlin.math.atan2
 import kotlin.math.pow

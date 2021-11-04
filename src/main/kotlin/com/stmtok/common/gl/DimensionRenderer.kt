@@ -1,11 +1,11 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
 import com.jogamp.opengl.GLAutoDrawable
 import com.jogamp.opengl.glu.GLU
 import com.jogamp.opengl.util.awt.TextRenderer
-import com.stmtok.gl.shader.NormalShader
+import com.stmtok.common.gl.shader.NormalShader
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Font

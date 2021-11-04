@@ -1,4 +1,4 @@
-package com.stmtok.gl.shader
+package com.stmtok.common.gl.shader
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2

@@ -1,9 +1,9 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
 import com.jogamp.opengl.util.gl2.GLUT
-import com.stmtok.geom.Point
+import com.stmtok.common.geom.Point
 import java.nio.FloatBuffer
 
 object Helper {

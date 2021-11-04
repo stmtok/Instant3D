@@ -1,4 +1,4 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 object Colors {
     val red = floatArrayOf(1f, 0f, 0f, 1f)

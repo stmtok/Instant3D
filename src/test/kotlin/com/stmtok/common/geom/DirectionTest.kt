@@ -1,4 +1,4 @@
-package com.stmtok.geom
+package com.stmtok.common.geom
 
 import org.junit.jupiter.api.Test
 import kotlin.math.PI

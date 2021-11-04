@@ -1,4 +1,4 @@
-package com.stmtok.gl
+package com.stmtok.common.gl
 
 import com.jogamp.opengl.GL
 import com.jogamp.opengl.GL2
